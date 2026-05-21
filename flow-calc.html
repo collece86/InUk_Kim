@@ -688,42 +688,62 @@
     let branchFlows = { '1': 12.01, '2': 12.00, '3': 12.01, '4': 12.01, 'loop': 11.64 };
     let controlMode = 'BRANCH'; 
     let masterBranchKey = '2';
-    function initSystem() {
-        // 1. 약액 데이터 초기화
-        const chemSelect = document.getElementById('chemical-selector');
-        chemSelect.innerHTML = "";
-        Object.keys(CHEMICALS_DB).sort().forEach(name => {
-            let opt = document.createElement('option'); opt.value = name; opt.innerText = name; chemSelect.appendChild(opt);
-        });
-        chemSelect.value = "H2O2"; // 기본 선택
-        // 2. 각 분기 배관 리스트 초기화 (원본 PIPE_DATA 연동)
-        ['1', '2', '3', '4', 'loop'].forEach(t => {
-            const el = document.getElementById('pipe-supply-' + t);
-            el.innerHTML = "";
-            for (let k in PIPE_DATA) {
-                let opt = document.createElement('option'); opt.value = k; opt.innerText = k; el.appendChild(opt);
-            }
-        });
-        // 원본 규격과 일치하게 기본 배치
-        document.getElementById('pipe-supply-1').value = "PFA 1-1/2\"";
-        document.getElementById('pipe-supply-2').value = "PFA 1-1/2\"";
-        document.getElementById('pipe-supply-3').value = "PFA 1-1/2\"";
-        document.getElementById('pipe-supply-4').value = "PFA 1-1/2\"";
-        document.getElementById('pipe-supply-loop').value = "PFA 3/4\"";
-        // 3. 내부 밸브 및 드롭다운 의존성 업데이트
-        onInternalMaterialChange();
-        ['1', '2', '3', '4', 'loop'].forEach(t => onBranchMaterialChange(t));
-        // 4. 초기 유량 세팅
-        document.getElementById('flow-1').value = "10.00";
-        document.getElementById('flow-2').value = "10.00";
-        document.getElementById('flow-3').value = "10.00";
-        document.getElementById('flow-4').value = "10.00";
-        document.getElementById('flow-loop').value = "15.00";
-        document.getElementById('input-total-flow').value = "65.00";
-        document.getElementById('card-2').classList.add('active-master');
-        document.getElementById('badge-2').innerText = "마스터";
-        onChemicalSelectionChange(); 
-    }
+	function initSystem() {
+		// 1. 약액 데이터 초기화
+		const chemSelect = document.getElementById('chemical-selector');
+		chemSelect.innerHTML = "";
+		
+		// CUSTOM 항목을 맨 먼저 추가
+		let optCustom = document.createElement('option'); 
+		optCustom.value = "CUSTOM"; 
+		optCustom.innerText = "[직접 입력 (Custom Input)]"; 
+		chemSelect.appendChild(optCustom);
+		
+		// 나머지 DB 데이터 정렬 추가
+		Object.keys(CHEMICALS_DB).sort().forEach(name => {
+			let opt = document.createElement('option'); 
+			opt.value = name; 
+			opt.innerText = name; 
+			chemSelect.appendChild(opt);
+		});
+		
+		// 기본 선택을 H2O2로 지정
+		chemSelect.value = "H2O2"; 
+	
+		// 2. 각 분기 배관 리스트 초기화
+		['1', '2', '3', '4', 'loop'].forEach(t => {
+			const el = document.getElementById('pipe-supply-' + t);
+			el.innerHTML = "";
+			for (let k in PIPE_DATA) {
+				let opt = document.createElement('option'); opt.value = k; opt.innerText = k; el.appendChild(opt);
+			}
+		});
+	
+		// 원본 규격 대신 40A 적용
+		document.getElementById('pipe-supply-1').value = "PFA 40A";
+		document.getElementById('pipe-supply-2').value = "PFA 40A";
+		document.getElementById('pipe-supply-3').value = "PFA 40A";
+		document.getElementById('pipe-supply-4').value = "PFA 40A";
+		document.getElementById('pipe-supply-loop').value = "PFA 3/4\"";
+	
+		// 3. 내부 밸브 및 드롭다운 의존성 업데이트
+		onInternalMaterialChange();
+		['1', '2', '3', '4', 'loop'].forEach(t => onBranchMaterialChange(t));
+	
+		// 4. 초기 유량 세팅
+		document.getElementById('flow-1').value = "10.00";
+		document.getElementById('flow-2').value = "10.00";
+		document.getElementById('flow-3').value = "10.00";
+		document.getElementById('flow-4').value = "10.00";
+		document.getElementById('flow-loop').value = "15.00";
+		document.getElementById('input-total-flow').value = "65.00";
+		
+		document.getElementById('card-2').classList.add('active-master');
+		document.getElementById('badge-2').innerText = "마스터";
+		
+		// 마지막에 호출하여 선택된 약액에 맞는 입력창 활성/비활성화 처리
+		onChemicalSelectionChange(); 
+}
     function onChemicalSelectionChange() {
         const select = document.getElementById('chemical-selector');
         const data = CHEMICALS_DB[select.value];
