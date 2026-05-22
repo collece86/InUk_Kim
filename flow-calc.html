@@ -688,7 +688,7 @@
     };
     let branchFlows = { '1': 10.00, '2': 10.00, '3': 10.00, '4': 10.00, 'loop': 25.00 };
     let controlMode = 'BRANCH'; 
-    let masterBranchKey = '2';
+    let masterBranchKey = '1';
 	function initSystem() {
 		// 1. 약액 데이터 초기화
 		const chemSelect = document.getElementById('chemical-selector');
@@ -730,8 +730,8 @@
 		}
 		let totalFlow = Object.values(branchFlows).reduce((a, b) => a + b, 0);
 		document.getElementById('input-total-flow').value = totalFlow.toFixed(2);
-		document.getElementById('card-2').classList.add('active-master');
-		document.getElementById('badge-2').innerText = "마스터";
+		document.getElementById('card-1').classList.add('active-master');
+		document.getElementById('badge-1').innerText = "마스터";
 		// 마지막에 호출하여 선택된 약액에 맞는 입력창 활성/비활성화 처리
 		onChemicalSelectionChange();
 }
