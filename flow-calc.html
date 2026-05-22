@@ -686,7 +686,7 @@
         "아황산나트륨": { sg: 1.1, viscosity: 1.0, friction_mod: 0.945 },
         "CUSTOM": { sg: 1.0, viscosity: 1.0, friction_mod: 1.0 }
     };
-    let branchFlows = { '1': 12.01, '2': 12.00, '3': 12.01, '4': 12.01, 'loop': 11.64 };
+    let branchFlows = { '1': 10.00, '2': 10.00, '3': 10.00, '4': 10.00, 'loop': 25.00 };
     let controlMode = 'BRANCH'; 
     let masterBranchKey = '2';
 	function initSystem() {
@@ -725,16 +725,15 @@
 		onInternalMaterialChange();
 		['1', '2', '3', '4', 'loop'].forEach(t => onBranchMaterialChange(t));
 		// 4. 초기 유량 세팅
-		document.getElementById('flow-1').value = "5.00";
-		document.getElementById('flow-2').value = "5.00";
-		document.getElementById('flow-3').value = "5.00";
-		document.getElementById('flow-4').value = "5.00";
-		document.getElementById('flow-loop').value = "10.00";
-		document.getElementById('input-total-flow').value = "30.00";
+		for (let k in branchFlows) {
+			document.getElementById('flow-' + k).value = branchFlows[k].toFixed(2);
+		}
+		let totalFlow = Object.values(branchFlows).reduce((a, b) => a + b, 0);
+		document.getElementById('input-total-flow').value = totalFlow.toFixed(2);
 		document.getElementById('card-2').classList.add('active-master');
 		document.getElementById('badge-2').innerText = "마스터";
 		// 마지막에 호출하여 선택된 약액에 맞는 입력창 활성/비활성화 처리
-		onChemicalSelectionChange(); 
+		onChemicalSelectionChange();
 }
     function onChemicalSelectionChange() {
         const select = document.getElementById('chemical-selector');
