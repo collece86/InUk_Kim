@@ -803,7 +803,7 @@
         vSizeInt.innerHTML = "";
         sizes.forEach(s => { let o = document.createElement('option'); o.value = s; o.innerText = s; vSizeInt.appendChild(o); });
         // 기본값 복원 안정성
-        vSizeInt.value = mat === "PFA" ? "1-1/2\"" : "40A";
+        vSizeInt.value = mat === "PFA" ? "40A" : "1-1/2\"";
         updateInternalValveDropdowns();
     }
     function onInternalSizeChange() { updateInternalValveDropdowns(); }
