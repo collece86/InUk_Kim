@@ -1068,13 +1068,16 @@
 <div id="patchlogModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; font-family:monospace;">
   <div style="background:#1a1d24; border:2px solid #ff3b30; width:90%; max-width:400px; padding:20px; color:#fff; box-shadow:0 0 20px rgba(255,59,48,0.4);">
     <!-- 상단 타이틀 -->
-    <div style="background:#ff3b30; padding:8px; font-weight:bold; font-size:13px; margin:-20px -20px 15px -20px; animation: blink 1s infinite steps(2);">⚠️ OVERPRESSURE WARNING / UPDATE</div>
+    <div style="background:#ff3b30; padding:8px; font-weight:bold; font-size:13px; margin:-20px -20px 15px -20px; animation: blink 1s infinite steps(2);">⚠️ PATCH LOG / UPDATE</div>
     <!-- 패치 내용 -->
-    <h3 style="color:#ffcc00; margin:0 0 10px 0; font-size:16px;">CRITICAL SYSTEM UPDATED</h3>
+    <h3 style="color:#ffcc00; margin:0 0 10px 0; font-size:16px;">SYSTEM INFORMATION</h3>
     <div style="background:#111318; padding:12px; color:#00ff66; font-size:13px; line-height:1.6; border:1px solid #333;">
-      • [ADD] 다크 모드(Dark UI) 시스템 탑재<br>
-      • [OPT] 코어 엔진 및 속도 200% 최적화<br>
-      • [FIX] 모바일 터치 입력 오류 해결
+      • [01] 분기포인트 4개 + 순환 가능<br>
+      • [02] ON/OFF TOGGLE 스위치로 선택 가능<br>
+	  • [03] 레이놀즈수 2300 기준 층류/난류 계산 방식삭제<br>
+	  •	     처칠식(Churchill Relation) 적용<br>
+	  •	     층류->천이구간->난류 부드럽게 이어지도록 수정<br>
+      • [04] 모바일/태블릿 수치 제어 화살표 추가 예정
     </div>
     <!-- 닫기 버튼 -->
     <button onclick="closePatch()" style="width:100%; margin-top:15px; background:none; border:1px solid #ff3b30; color:#ff3b30; padding:10px; font-weight:bold; cursor:pointer;">ACKNOWLEDGE & CLOSE</button>
