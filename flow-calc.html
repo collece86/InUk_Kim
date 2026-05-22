@@ -259,7 +259,7 @@
             </div>
             <div class="grid-cell">
                 <label>밸브 수량(EA)</label>
-                <input type="number" id="v-qty-int" value="1" min="0" style="text-align:center;" oninput="runSystemSolver()">
+                <input type="number" id="v-qty-int" value="7" min="0" style="text-align:center;" oninput="runSystemSolver()">
             </div>
             <div class="grid-cell">
                 <label style="color:var(--warning-red);">밸브 내부 차압 결과</label>
@@ -290,7 +290,7 @@
                 <select id="v-size-1" onchange="onBranchSizeChange('1')"></select>
                 <select id="v-maker-1" onchange="onBranchMakerChange('1')"></select>
                 <select id="v-type-1" onchange="runSystemSolver()"></select>
-                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-1" value="1" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
+                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-1" value="2" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
             </div>
         </div>
         <div class="card" id="card-2">
@@ -314,7 +314,7 @@
                 <select id="v-size-2" onchange="onBranchSizeChange('2')"></select>
                 <select id="v-maker-2" onchange="onBranchMakerChange('2')"></select>
                 <select id="v-type-2" onchange="runSystemSolver()"></select>
-                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-2" value="1" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
+                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-2" value="2" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
             </div>
         </div>
         <div class="card" id="card-3">
@@ -338,7 +338,7 @@
                 <select id="v-size-3" onchange="onBranchSizeChange('3')"></select>
                 <select id="v-maker-3" onchange="onBranchMakerChange('3')"></select>
                 <select id="v-type-3" onchange="runSystemSolver()"></select>
-                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-3" value="1" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
+                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-3" value="2" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
             </div>
         </div>
         <div class="card" id="card-4">
@@ -362,7 +362,7 @@
                 <select id="v-size-4" onchange="onBranchSizeChange('4')"></select>
                 <select id="v-maker-4" onchange="onBranchMakerChange('4')"></select>
                 <select id="v-type-4" onchange="runSystemSolver()"></select>
-                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-4" value="1" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
+                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-4" value="2" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
             </div>
         </div>
         <div class="card" id="card-loop">
@@ -386,7 +386,7 @@
                 <select id="v-size-loop" onchange="onBranchSizeChange('loop')"></select>
                 <select id="v-maker-loop" onchange="onBranchMakerChange('loop')"></select>
                 <select id="v-type-loop" onchange="runSystemSolver()"></select>
-                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-loop" value="1" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
+                <div style="grid-column: span 2; display:flex; align-items:center; gap:5px; justify-content:flex-end;">수량: <input type="number" id="v-qty-loop" value="2" min="0" style="height:20px; width:50px; text-align:center;" oninput="runSystemSolver()"></div>
             </div>
         </div>
     </div>
@@ -1035,9 +1035,20 @@
             mainValEl.innerText = lineTotal.toFixed(2) + " kgf/cm²";
             subTxtEl.innerHTML = `공통구간 압손: ${intDropTotal.toFixed(2)}<br>수평배관 압손: ${r.horizontal.toFixed(2)}<br>수직배관 압손: ${r.vertical.toFixed(2)}<br>분기후 밸브압손: ${(finalManifoldP - r.horizontal - r.vertical - parseFloat(document.getElementById('end-p' + t).value)).toFixed(2)}`;
         });
+		// --- 펌프 총 압력 및 양정 계산 ---
         let totalPumpPressure = finalManifoldP + intDropTotal;
         document.getElementById('res-head').innerText = ((totalPumpPressure * 10.197) / sg).toFixed(2) + " m";
-    }
+
+        // [최종 수정] 여기서 확실하게 알람을 체크합니다.
+        // 1. input-limit의 값을 가져오되, 값이 없으면 기본값 5.0을 사용
+        let limitInput = document.getElementById('input-limit');
+        let limitP = limitInput ? parseFloat(limitInput.value) : 5.0;
+
+        // 2. 루프를 다 돌고 계산된 totalPumpPressure가 limitP를 초과하는지 실시간 감시
+        if (totalPumpPressure > limitP) {
+            alert("⚠️ [과압 경고] 총 압손(" + totalPumpPressure.toFixed(2) + " kgf/cm²)이 제한값(" + limitP.toFixed(2) + " kgf/cm²)을 초과했습니다!");
+        }
+    } // 👈 runSystemSolver 함수 닫기
     window.onload = initSystem;
 </script>
 </body>
