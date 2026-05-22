@@ -693,13 +693,11 @@
 		// 1. 약액 데이터 초기화
 		const chemSelect = document.getElementById('chemical-selector');
 		chemSelect.innerHTML = "";
-		
 		// CUSTOM 항목을 맨 먼저 추가
 		let optCustom = document.createElement('option'); 
 		optCustom.value = "CUSTOM"; 
 		optCustom.innerText = "[직접 입력 (Custom Input)]"; 
 		chemSelect.appendChild(optCustom);
-		
 		// 나머지 DB 데이터 정렬 추가
 		Object.keys(CHEMICALS_DB).sort().forEach(name => {
 			let opt = document.createElement('option'); 
@@ -707,10 +705,8 @@
 			opt.innerText = name; 
 			chemSelect.appendChild(opt);
 		});
-		
 		// 기본 선택을 H2O2로 지정
 		chemSelect.value = "H2O2"; 
-	
 		// 2. 각 분기 배관 리스트 초기화
 		['1', '2', '3', '4', 'loop'].forEach(t => {
 			const el = document.getElementById('pipe-supply-' + t);
@@ -719,18 +715,15 @@
 				let opt = document.createElement('option'); opt.value = k; opt.innerText = k; el.appendChild(opt);
 			}
 		});
-	
 		// 원본 규격 대신 40A 적용
 		document.getElementById('pipe-supply-1').value = "PFA 40A";
 		document.getElementById('pipe-supply-2').value = "PFA 40A";
 		document.getElementById('pipe-supply-3').value = "PFA 40A";
 		document.getElementById('pipe-supply-4').value = "PFA 40A";
 		document.getElementById('pipe-supply-loop').value = "PFA 3/4\"";
-	
 		// 3. 내부 밸브 및 드롭다운 의존성 업데이트
 		onInternalMaterialChange();
 		['1', '2', '3', '4', 'loop'].forEach(t => onBranchMaterialChange(t));
-	
 		// 4. 초기 유량 세팅
 		document.getElementById('flow-1').value = "10.00";
 		document.getElementById('flow-2').value = "10.00";
@@ -738,10 +731,8 @@
 		document.getElementById('flow-4').value = "10.00";
 		document.getElementById('flow-loop').value = "15.00";
 		document.getElementById('input-total-flow').value = "65.00";
-		
 		document.getElementById('card-2').classList.add('active-master');
 		document.getElementById('badge-2').innerText = "마스터";
-		
 		// 마지막에 호출하여 선택된 약액에 맞는 입력창 활성/비활성화 처리
 		onChemicalSelectionChange(); 
 }
@@ -766,7 +757,6 @@
 	function toggleBranch(k) {
 		const isChecked = document.getElementById('use-' + k).checked;
 		const card = document.getElementById('card-' + k);
-		
 		if(isChecked) {
 			card.classList.remove('branch-off');
 			enableCardInputs(k, true);
@@ -777,23 +767,19 @@
 			document.getElementById('flow-' + k).value = "0.00";
 			branchFlows[k] = 0.0;
 			enableCardInputs(k, false);
-			
 			// 마스터가 꺼진 예외적 케이스 보호 장치 (남아있는 ON 중 가장 앞번호로 자동 양도)
 			if (masterBranchKey === k && controlMode === 'BRANCH') {
 				// 전체 순서 정의 ('1'번부터 'loop'까지)
 				const allKeys = ['1', '2', '3', '4', 'loop'];
-				
 				// 현재 화면에서 체크박스가 켜져 있는(ON) 녀석들만 필터링
 				const activeKeys = allKeys.filter(key => {
 					const cb = document.getElementById('use-' + key);
 					return cb && cb.checked;
 				});
-				
 				if (activeKeys.length > 0) {
 					// 살아있는 녀석 중 가장 앞번호 선점
 					const nextMaster = activeKeys[0];
 					masterBranchKey = nextMaster;
-					
 					// 새 마스터에게 노란색 강조 효과와 마스터 텍스트 부여
 					document.getElementById('card-' + nextMaster).classList.add('active-master');
 					document.getElementById('badge-' + nextMaster).innerText = "마스터";
