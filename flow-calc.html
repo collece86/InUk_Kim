@@ -981,7 +981,7 @@
         document.getElementById('lbl-sg').innerText = sg.toFixed(2);
         document.getElementById('lbl-visc').innerText = viscosity.toFixed(2);
         let finalManifoldP = 0.0;
-        const activeBranches = ['1', '2', '3', '4', 'loop'].filter(t => t === '1' || document.getElementById('use-' + t).checked);
+        const activeBranches = ['1', '2', '3', '4', 'loop'].filter(t => document.getElementById('use-' + t).checked);
         if (controlMode === 'TOTAL') {
             const targetTotal = Math.max(0.1, parseFloat(document.getElementById('input-total-flow').value) || 0);
             let lowP = 0.0, highP = 30.0;
@@ -991,17 +991,21 @@
                 if (sum > targetTotal) highP = finalManifoldP; else lowP = finalManifoldP;
             }
             ['1', '2', '3', '4', 'loop'].forEach(t => {
-                if (t === '1' || document.getElementById('use-' + t).checked) {
+                if (document.getElementById('use-' + t).checked) {
                     branchFlows[t] = inverseBranchFlow(finalManifoldP, t, sg, viscosity);
                 } else {
                     branchFlows[t] = 0.0;
                 }
             });
         } else {
-            finalManifoldP = calcBranchDrop(branchFlows[masterBranchKey], masterBranchKey, sg, viscosity).total;
+			if (masterBranchKey) {
+					finalManifoldP = calcBranchDrop(branchFlows[masterBranchKey], masterBranchKey, sg, viscosity).total;
+				} else {
+					finalManifoldP = 0.0;
+				}
             ['1', '2', '3', '4', 'loop'].forEach(t => {
                 if (t === masterBranchKey) return;
-                if (t === '1' || document.getElementById('use-' + t).checked) {
+                if (document.getElementById('use-' + t).checked) {
                     branchFlows[t] = inverseBranchFlow(finalManifoldP, t, sg, viscosity);
                 } else {
                     branchFlows[t] = 0.0;
@@ -1016,7 +1020,7 @@
         const intDropTotal = calcInternalCommonDrop(totQ, sg);
         document.getElementById('calc-internal-p-valve').innerText = intDropTotal.toFixed(3) + " kgf/cm²";
         ['1', '2', '3', '4', 'loop'].forEach(t => {
-            const isLineOn = (t === '1' || document.getElementById('use-' + t).checked);
+            const isLineOn = document.getElementById('use-' + t).checked;
             const mainValEl = document.getElementById('res-p' + t);
             const subTxtEl = document.getElementById('breakdown-' + t);
             if (!isLineOn) {
