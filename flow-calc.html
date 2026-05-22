@@ -909,9 +909,12 @@
         let valveP_kg = 0;
         const cv = getSelectedCvInt();
         const qty = parseInt(document.getElementById('v-qty-int').value) || 0;
-        if (qty > 0 && cv > 0) {
-            valveP_kg = sg * Math.pow((totalFlowLPM * 0.264172) / cv, 2) * 0.070307 * qty;
-        }
+		if (qty > 0 && cv > 0) {
+			// 제시해주신 엔지니어링 공식 대입
+			const flowTerm = (totalFlowLPM * 60) / 1000;
+			const cvTerm = 0.856 * cv;
+			valveP_kg = qty * sg * Math.pow(flowTerm, 2) / Math.pow(cvTerm, 2);
+		}
         const filterP_kg = parseFloat(document.getElementById('input-internal-filter-p').value) || 0;
         return valveP_kg + filterP_kg;
     }
@@ -938,9 +941,13 @@
         let pValve_kg = 0; 
         const cv = getSelectedCvBranch(k);
         const vQty = parseInt(document.getElementById('v-qty-' + k).value) || 0;
-        if (vQty > 0 && cv > 0) {
-            pValve_kg = sg * Math.pow(((flowLPM / sQty) * 0.264172) / cv, 2) * 0.070307 * vQty;
-        }
+		if (vQty > 0 && cv > 0) {
+			// 배관 병렬수를 나눈 유량 기준으로 엔지니어링 공식 대입
+			const branchFlowPerPipe = flowLPM / sQty; 
+			const flowTerm = (branchFlowPerPipe * 60) / 1000;
+			const cvTerm = 0.856 * cv;
+			pValve_kg = vQty * sg * Math.pow(flowTerm, 2) / Math.pow(cvTerm, 2);
+		}
         return { 
             total: pHorizontal_kg + pVertical_kg + pValve_kg + endP, 
             horizontal: pHorizontal_kg, 
@@ -1003,7 +1010,7 @@
         const totQ = ['1', '2', '3', '4', 'loop'].reduce((acc, curr) => acc + branchFlows[curr], 0);
         document.getElementById('input-total-flow').value = totQ.toFixed(2);
         const intDropTotal = calcInternalCommonDrop(totQ, sg);
-        document.getElementById('calc-internal-p-valve').innerText = intDropTotal.toFixed(3) + " kgf/cm²";
+        document.getElementById('calc-internal-p-valve').innerText = intDropTotal.toFixed(2) + " kgf/cm²";
         ['1', '2', '3', '4', 'loop'].forEach(t => {
             const isLineOn = document.getElementById('use-' + t).checked;
             const mainValEl = document.getElementById('res-p' + t);
