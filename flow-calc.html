@@ -272,6 +272,7 @@
         <div class="card" id="card-1">
             <h3>
                 <span>분기 라인 1 <span class="badge" id="badge-1">종속</span></span>
+                <div class="toggle-container"><input type="checkbox" id="use-1" checked onchange="toggleBranch('1')"><span>ON</span></div>
             </h3>
             <div style="margin-bottom:6px;"><label class="red-val">🎯 설정 유량(LPM)</label><input type="number" id="flow-1" step="0.1" class="red-val" oninput="onBranchFlowChange('1')"></div>
             <div style="display:grid; grid-template-columns:1.6fr 0.9fr; gap:5px; margin-bottom:5px;">
@@ -762,28 +763,48 @@
         runSystemSolver();
     }
     // ON/OFF 체크박스 가동 제어
-    function toggleBranch(k) {
-        const isChecked = document.getElementById('use-' + k).checked;
-        const card = document.getElementById('card-' + k);
-        if(isChecked) {
-            card.classList.remove('branch-off');
-            enableCardInputs(k, true);
-        } else {
-            card.classList.add('branch-off');
-            card.classList.remove('active-master');
-            document.getElementById('badge-' + k).innerText = "종속";
-            document.getElementById('flow-' + k).value = "0.00";
-            branchFlows[k] = 0.0;
-            enableCardInputs(k, false);
-            // 마스터가 꺼진 예외적 케이스 보호 장치 (분기1 자동 양도)
-            if (masterBranchKey === k && controlMode === 'BRANCH') {
-                masterBranchKey = '1';
-                document.getElementById('card-1').classList.add('active-master');
-                document.getElementById('badge-1').innerText = "마스터";
-            }
-        }
-        runSystemSolver();
-    }
+	function toggleBranch(k) {
+		const isChecked = document.getElementById('use-' + k).checked;
+		const card = document.getElementById('card-' + k);
+		
+		if(isChecked) {
+			card.classList.remove('branch-off');
+			enableCardInputs(k, true);
+		} else {
+			card.classList.add('branch-off');
+			card.classList.remove('active-master');
+			document.getElementById('badge-' + k).innerText = "종속";
+			document.getElementById('flow-' + k).value = "0.00";
+			branchFlows[k] = 0.0;
+			enableCardInputs(k, false);
+			
+			// 마스터가 꺼진 예외적 케이스 보호 장치 (남아있는 ON 중 가장 앞번호로 자동 양도)
+			if (masterBranchKey === k && controlMode === 'BRANCH') {
+				// 전체 순서 정의 ('1'번부터 'loop'까지)
+				const allKeys = ['1', '2', '3', '4', 'loop'];
+				
+				// 현재 화면에서 체크박스가 켜져 있는(ON) 녀석들만 필터링
+				const activeKeys = allKeys.filter(key => {
+					const cb = document.getElementById('use-' + key);
+					return cb && cb.checked;
+				});
+				
+				if (activeKeys.length > 0) {
+					// 살아있는 녀석 중 가장 앞번호 선점
+					const nextMaster = activeKeys[0];
+					masterBranchKey = nextMaster;
+					
+					// 새 마스터에게 노란색 강조 효과와 마스터 텍스트 부여
+					document.getElementById('card-' + nextMaster).classList.add('active-master');
+					document.getElementById('badge-' + nextMaster).innerText = "마스터";
+				} else {
+					// 만약 루프까지 포함해 5개가 전부 꺼졌다면 마스터 공석 처리
+					masterBranchKey = null;
+				}
+			}
+		}
+		runSystemSolver();
+	}
     function enableCardInputs(k, status) {
         const selects = document.getElementById('card-' + k).querySelectorAll('select');
         const inputs = document.getElementById('card-' + k).querySelectorAll('input[type="number"]');
