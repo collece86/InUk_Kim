@@ -1035,21 +1035,42 @@
             mainValEl.innerText = lineTotal.toFixed(2) + " kgf/cm²";
             subTxtEl.innerHTML = `공통구간 압손: ${intDropTotal.toFixed(2)}<br>수평배관 압손: ${r.horizontal.toFixed(2)}<br>수직배관 압손: ${r.vertical.toFixed(2)}<br>분기후 밸브압손: ${(finalManifoldP - r.horizontal - r.vertical - parseFloat(document.getElementById('end-p' + t).value)).toFixed(2)}`;
         });
-		// --- 펌프 총 압력 및 양정 계산 ---
-        let totalPumpPressure = finalManifoldP + intDropTotal;
-        document.getElementById('res-head').innerText = ((totalPumpPressure * 10.197) / sg).toFixed(2) + " m";
-
-        // [최종 수정] 여기서 확실하게 알람을 체크합니다.
-        // 1. input-limit의 값을 가져오되, 값이 없으면 기본값 5.0을 사용
-        let limitInput = document.getElementById('input-limit');
-        let limitP = limitInput ? parseFloat(limitInput.value) : 5.0;
-
-        // 2. 루프를 다 돌고 계산된 totalPumpPressure가 limitP를 초과하는지 실시간 감시
-        if (totalPumpPressure > limitP) {
-            alert("⚠️ [과압 경고] 총 압손(" + totalPumpPressure.toFixed(2) + " kgf/cm²)이 제한값(" + limitP.toFixed(2) + " kgf/cm²)을 초과했습니다!");
-        }
-    } // 👈 runSystemSolver 함수 닫기
-    window.onload = initSystem;
+			// --- 펌프 총 압력 및 양정 계산 ---
+			let totalPumpPressure = finalManifoldP + intDropTotal;
+			document.getElementById('res-head').innerText = ((totalPumpPressure * 10.197) / sg).toFixed(2) + " m";
+			// 💡 과압 체크 로직
+			let limitInput = document.getElementById('input-limit');
+			let limitP = limitInput ? parseFloat(limitInput.value) : 5.0;
+			if (totalPumpPressure > limitP) {
+			// [추가] 12번에 없던 경고창 기능을 즉석에서 정의하여 호출
+			showCustomAlert("압력 손실이 허용 한계치인 " + limitP.toFixed(1) + " kgf/cm²를 초과하여<br>유량을 강제 하향 조정 제어합니다.");
+			}
+		} // runSystemSolver 함수 끝
+		// 💡 12번 코드에 부족했던 '경고창 디자인' 기능을 여기서 정의합니다.
+		function showCustomAlert(msg) {
+			// 이미 12번 코드의 HTML 영역에 예전 디자인 div가 있다면 아래 코드가 찾아낼 것입니다.
+			// 만약 디자인이 안 뜬다면, 13번 코드의 HTML 부분에 있는 <div id="custom-alert">...</div> 태그를 12번 HTML에도 복사해 넣어야 합니다.
+			let alertBox = document.getElementById('custom-alert');
+			if(alertBox) {
+				alertBox.querySelector('.alert-message').innerHTML = msg;
+				alertBox.style.display = 'block';
+			} else {
+				// 만약 HTML 태그가 없다면 브라우저 알람으로 대체합니다.
+				alert(msg.replace("<br>", " "));
+			}
+		}
+		window.onload = initSystem;
 </script>
+<div id="custom-alert" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:25px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); text-align:center; width:400px;">
+        <div style="color:#d9534f; font-weight:bold; font-size:18px; margin-bottom:15px;">
+            ⚠️ 시스템 과압 위험 경고
+        </div>
+        <div class="alert-message" style="margin-bottom:20px; line-height:1.5;"></div>
+        <button onclick="document.getElementById('custom-alert').style.display='none'" style="background:#d9534f; color:white; border:none; padding:10px 25px; border-radius:4px; cursor:pointer; font-weight:bold;">
+            확인
+        </button>
+    </div>
+</div>
 </body>
 </html>
