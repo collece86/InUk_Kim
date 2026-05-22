@@ -1017,7 +1017,7 @@
             }
             mainValEl.className = "res-main-val";
             let r = calcBranchDrop(branchFlows[t], t, sg, viscosity);
-            let lineTotal = intDropTotal + finalManifoldP;
+            let lineTotal = intDropTotal + r.total;
             mainValEl.innerText = lineTotal.toFixed(2) + " kgf/cm²";
             subTxtEl.innerHTML = `공통구간 압손: ${intDropTotal.toFixed(2)}<br>수평배관 압손: ${r.horizontal.toFixed(2)}<br>수직배관 압손: ${r.vertical.toFixed(2)}<br>분기후 밸브압손: ${r.valve.toFixed(2)}<br>말단 압력: ${parseFloat(document.getElementById('end-p' + t).value).toFixed(2)}`;
         });
