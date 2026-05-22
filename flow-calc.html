@@ -1024,7 +1024,7 @@
 			let totalPumpPressure = finalManifoldP + intDropTotal;
 			document.getElementById('res-head').innerText = ((totalPumpPressure * 10.197) / sg).toFixed(2) + " m";
 			// 💡 과압 체크 로직
-			let limitInput = document.getElementById('input-limit');
+			let limitInput = document.getElementById('input-pressure-limit');
 			let limitP = limitInput ? parseFloat(limitInput.value) : 5.0;
 			if (totalPumpPressure > limitP) {
 			// [추가] 12번에 없던 경고창 기능을 즉석에서 정의하여 호출
