@@ -420,7 +420,7 @@
     function adjustFlow(branchKey, direction) {
         const inputEl = document.getElementById(branchKey === 'total' ? 'input-total-flow' : 'flow-' + branchKey);
         let currentVal = parseFloat(inputEl.value) || 0;
-        let newVal = currentVal + (direction * 0.5); // 한 번에 0.5 LPM씩 조절
+        let newVal = currentVal + (direction * 0.1); // 한 번에 0.1 LPM씩 조절
         newVal = Math.max(0, newVal); // 음수 방지
         inputEl.value = newVal.toFixed(2);
         if (branchKey === 'total') {
