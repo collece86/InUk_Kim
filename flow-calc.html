@@ -923,7 +923,8 @@
         if (flowLPM <= 0.0001) return { total: endP, horizontal: 0, vertical: 0, valve: 0 };
         const sQty = Math.max(1, parseInt(document.getElementById('pipe-qty-' + k).value) || 1);
         const pipeSpec = PIPE_DATA[document.getElementById('pipe-supply-' + k).value] || PIPE_DATA["PFA 1-1/2\""];
-        const dInner = pipeSpec.id / 1000;
+        // mm 단위를 m 단위로 변경
+		const dInner = pipeSpec.id / 1000;
         const vel = (flowLPM / 60000 / sQty) / (Math.PI * Math.pow(dInner, 2) / 4);
         const rho = sg * 1000, mu = viscosity / 1000;
         const re = Math.max(0.1, (rho * vel * dInner) / mu);
@@ -933,12 +934,10 @@
         const f = 8 * Math.pow(Math.pow(8 / re, 12) + 1 / Math.pow(A + B, 1.5), 1/12);
         const lenH = parseFloat(document.getElementById('len-h' + k).value) || 0;
         const lenV = parseFloat(document.getElementById('len-v' + k).value) || 0;
-        let pFricH_pa = f * (lenH / dInner) * (rho * Math.pow(vel, 2) / 2);
-        const pHorizontal_kg = pFricH_pa * 1.0197e-5;
-        let pFricV_pa = f * (lenV / dInner) * (rho * Math.pow(vel, 2) / 2);
-        const pStatic_pa = rho * 9.81 * lenV;
-        const pVertical_kg = (pFricV_pa + pStatic_pa) * 1.0197e-5;
-        let pValve_kg = 0; 
+        const pHorizontal_kg = (f * rho * Math.pow(vel, 2) * lenH) / (2 * 9.81 * dInner) / 10000;
+        const pVertical_kg =  rho * lenV / 10000;
+        // 밸브수량 0 일때 오류방지하기 위해 초기값 0으로 설정
+		let pValve_kg = 0; 
         const cv = getSelectedCvBranch(k);
         const vQty = parseInt(document.getElementById('v-qty-' + k).value) || 0;
 		if (vQty > 0 && cv > 0) {
