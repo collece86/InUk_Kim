@@ -1029,7 +1029,7 @@
         });
 			// --- 펌프 총 압력 및 양정 계산 ---
 			let totalPumpPressure = finalManifoldP + intDropTotal;
-			document.getElementById('res-head').innerText = ((totalPumpPressure * 10.197) / sg).toFixed(2) + " m";
+			document.getElementById('res-head').innerText = ((totalPumpPressure * 10) / sg).toFixed(2) + " m";
 			// 💡 과압 체크 로직
 			let limitInput = document.getElementById('input-pressure-limit');
 			let limitP = limitInput ? parseFloat(limitInput.value) : 5.0;
